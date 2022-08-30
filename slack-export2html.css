@@ -1,0 +1,36 @@
+
+
+div.slack-message {
+  padding: 0 0.5em 0 calc(0.5em + 2.5em + 0.5em);
+  margin: 0.5em 0;
+  background-image: linear-gradient(to bottom, gray, black);
+  background-repeat: no-repeat;
+  background-size: 2.5em 2.5em;
+  background-position: 0.5em 0.1em;
+  min-height: 2.5em;
+}
+
+span.slack-timestamp {
+  color: gray;
+  font-size: 90%;
+}
+
+div.slack-element-section {}
+blockquote.slack-element-quote {
+  border-left: 3px solid #aaa;
+  padding: 0 0.5em;
+  margin: 0.2em 0;
+}
+ul.slack-element-list { margin: 0.2em; padding-left: 2em; }
+pre.slack-element-pre {
+  background-color: #eee;
+  padding: 0.2em;
+  border: 1px solid gray;
+}
+
+a.slack-element-code {
+  font-family: monospace;
+  padding: 0.2em;
+  background-color: #eee;
+  border: 1px dashed gray;
+}
