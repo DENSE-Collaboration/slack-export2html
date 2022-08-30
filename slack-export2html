@@ -5,9 +5,16 @@ archive=$1
 if [[ $archive != *.zip ]]; then
   echo "usage: ${0##*/} 'WORKSPACE Slack export DATE_BEGIN - DATE_END.zip'" >&2
   return 2
+elif [[ ! -e $archive ]]; then
+  echo "slack-export2html: $archive is not found" >&2
+  return 2
+elif [[ -d $archive ]]; then
+  echo "slack-export2html: $archive is a directory" >&2
+  return 2
+elif [[ ! -s $archive ]]; then
+  echo "slack-export2html: $archive is empty" >&2
+  return 2
 fi
-
-outdir=${archive#*.zip}
 
 base=$(readlink -f "$0")
 base=${base%/*}
@@ -18,6 +25,9 @@ if ! tmpdir=$(mktemp -d) || [[ ! $tmpdir ]]; then
 fi
 trap -- 'rm -rf "$tmpdir"' EXIT
 trap -- 'rm -rf "$tmpdir"; trap - INT; kill -INT $$' INT
+
+outdir=${archive%.zip}
+mkdir -p "$outdir"
 
 echo "base: $base"
 echo "archive: $archive"
