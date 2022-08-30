@@ -1,40 +1,52 @@
 #!/usr/bin/env bash
 
-archive=$1
-[[ $archive == /* ]] || archive=$PWD/$archive
-if [[ $archive != *.zip ]]; then
-  echo "usage: ${0##*/} 'WORKSPACE Slack export DATE_BEGIN - DATE_END.zip'" >&2
-  return 2
-elif [[ ! -e $archive ]]; then
-  echo "slack-export2html: $archive is not found" >&2
-  return 2
-elif [[ -d $archive ]]; then
-  echo "slack-export2html: $archive is a directory" >&2
-  return 2
-elif [[ ! -s $archive ]]; then
-  echo "slack-export2html: $archive is empty" >&2
-  return 2
-fi
+__program_name=slack-export2html
 
-base=$(readlink -f "$0")
-base=${base%/*}
+function main {
+  archive=$1
+  [[ $archive == /* ]] || archive=$PWD/$archive
+  if [[ $archive != *.zip ]]; then
+    echo "usage: ${0##*/} 'WORKSPACE Slack export DATE_BEGIN - DATE_END.zip'" >&2
+    return 2
+  elif [[ ! -e $archive ]]; then
+    echo "$__program_name: $archive is not found" >&2
+    return 2
+  elif [[ -d $archive ]]; then
+    echo "$__program_name: $archive is a directory" >&2
+    return 2
+  elif [[ ! -s $archive ]]; then
+    echo "$__program_name: $archive is empty" >&2
+    return 2
+  fi
 
-if ! tmpdir=$(mktemp -d) || [[ ! $tmpdir ]]; then
-  echo "failed to create a temporary directory" >&2
-  return 1
-fi
-trap -- 'rm -rf "$tmpdir"' EXIT
-trap -- 'rm -rf "$tmpdir"; trap - INT; kill -INT $$' INT
+  if ! base=$(readlink -f "$0"); then
+    echo "$__program_name: failed to obtain the base path of $__program_name" >&2
+    return 1
+  fi
+  base=${base%/*}
 
-outdir=${archive%.zip}
-mkdir -p "$outdir"
+  if ! tmpdir=$(mktemp -d) || [[ ! $tmpdir ]]; then
+    echo "failed to create a temporary directory" >&2
+    return 1
+  fi
+  trap -- 'rm -rf "$tmpdir"' EXIT
+  trap -- 'rm -rf "$tmpdir"; trap - INT; kill -INT $$' INT
 
-echo "base: $base"
-echo "archive: $archive"
-echo "tmpdir: $tmpdir"
-echo "outdir: $outdir"
+  outdir=${archive%.zip}
+  if ! mkdir -p "$outdir"; then
+    echo "$__program_name: failed to create the output directory '$outdir'" >&2
+    return 1
+  fi
 
-(cd "$tmpdir" && unzip "$archive") &&
-  ( cd "$outdir" &&
-      cp "$base/slack-export2html.css" ./ &&
-      "$base/slack-export2html.js" "$tmpdir")
+  echo "base: $base"
+  echo "archive: $archive"
+  echo "tmpdir: $tmpdir"
+  echo "outdir: $outdir"
+
+  (cd "$tmpdir" && unzip "$archive") &&
+    ( cd "$outdir" &&
+        cp "$base/slack-export2html.css" ./ &&
+        "$base/slack-export2html.js" "$tmpdir")
+}
+
+main "$@"

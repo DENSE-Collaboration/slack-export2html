@@ -4,6 +4,7 @@
 
 - `unzip`
 - `node`
+- `readlink -f` (e.g., GNU coreutils has this option)
 
 ## Usage
 
