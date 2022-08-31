@@ -28,7 +28,10 @@ pre.slack-element-pre {
   border: 1px solid gray;
 }
 
-a.slack-element-code {
+.slack-style-bold {
+  font-weight: bold;
+}
+.slack-style-code {
   font-family: monospace;
   padding: 0.2em;
   background-color: #eee;

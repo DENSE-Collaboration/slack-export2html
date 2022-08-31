@@ -100,11 +100,20 @@ function convert_elements(elements, buff) {
     case 'link':
       let attrs = '';
       if (element.style && element.style.code)
-        attrs += ' class="slack-element-code"';
+        attrs += ' class="slack-style-code"';
       buff.push(`<a href="${atescape(element.url)}"${attrs}>${htescape(element.text || element.url)}</a>`);
       return;
     case 'text':
+      const classes =[];
+      if (element.style) {
+        if (element.style.bold) classes.push('slack-style-bold');
+        if (element.style.code) classes.push('slack-style-code');
+      }
+      if (classes.length)
+        buff.push(`<span class="${classes.join()}"`);
       buff.push(htescape(element.text));
+      if (classes.length)
+        buff.push('</span>');
       return;
     }
 
